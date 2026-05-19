@@ -30,6 +30,13 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest
-            cd /home/ec2-user/back-despachos
-            docker compose up -d --force-recreate
+            docker pull daniel0netto/back-despachos:latest
+            docker stop back-despachos || true
+            docker rm back-despachos || true
+            docker run -d --name back-despachos -p 8081:8081 \
+              -e DB_ENDPOINT=mysql \
+              -e DB_PORT=3306 \
+              -e DB_NAME=despachos_db \
+              -e DB_USERNAME=despachos_user \
+              -e DB_PASSWORD=despachos_pass \
+              daniel0netto/back-despachos:latest
