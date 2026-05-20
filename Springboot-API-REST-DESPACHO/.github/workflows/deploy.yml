@@ -30,10 +30,10 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            docker pull daniel0netto/back-despachos:latest
-            docker stop back-despachos || true
-            docker rm back-despachos || true
-            docker run -d --name back-despachos -p 8081:8081 \
+            sudo docker pull daniel0netto/back-despachos:latest
+            sudo docker stop back-despachos || true
+            sudo docker rm back-despachos || true
+            sudo docker run -d --name back-despachos -p 8081:8081 \
               -e DB_ENDPOINT=mysql \
               -e DB_PORT=3306 \
               -e DB_NAME=despachos_db \
