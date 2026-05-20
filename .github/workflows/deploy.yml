@@ -20,7 +20,7 @@ jobs:
 
       - name: Build y Push imagen
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest ./Springboot-API-REST-DESPACHO
           docker push ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest
 
       - name: Deploy en EC2 Backend
@@ -30,13 +30,12 @@ jobs:
           username: ec2-user
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            sudo docker pull daniel0netto/back-despachos:latest
-            sudo docker stop back-despachos || true
-            sudo docker rm back-despachos || true
-            sudo docker run -d --name back-despachos -p 8081:8081 \
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest
+            sudo docker rm -f back-despachos 2>/dev/null || true
+            sudo docker run --detach --name back-despachos --publish 8081:8081 \
               -e DB_ENDPOINT=mysql \
               -e DB_PORT=3306 \
               -e DB_NAME=despachos_db \
               -e DB_USERNAME=despachos_user \
               -e DB_PASSWORD=despachos_pass \
-              daniel0netto/back-despachos:latest
+              ${{ secrets.DOCKER_USERNAME }}/back-despachos:latest
